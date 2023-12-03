@@ -1,0 +1,8 @@
+{
+  "editor.formatOnSave": true,
+  "prettier.semi": false,
+  "scss.completion.completePropertyWithSemicolon": true,
+  "less.completion.completePropertyWithSemicolon": true,
+  "css.completion.completePropertyWithSemicolon": true,
+  "typescript.format.semicolons": "remove"
+}
