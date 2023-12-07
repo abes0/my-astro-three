@@ -1,5 +1,6 @@
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/Addons.js"
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"
 
 export default class CommonWork {
   scene: THREE.Scene | null = null
@@ -84,5 +85,21 @@ export default class CommonWork {
     const controls = new OrbitControls(this.camera, this.renderer?.domElement)
     controls.target = new THREE.Vector3(...(target || [0, 0, 0]))
     controls.maxPolarAngle = maxPolarAngle || Math.PI
+  }
+
+  async loadGLTF({ modelData }: { modelData: string }) {
+    return new Promise(
+      (resolve) => {
+        new GLTFLoader().load(modelData, (gltf) => {
+          resolve(gltf)
+        })
+      },
+      (progress) => {
+        console.log(progress)
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
   }
 }

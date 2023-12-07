@@ -12,12 +12,12 @@ export default class App {
 
   init($canvas: HTMLCanvasElement) {
     this.common = new CommonWork({ $canvas })
-    this.common.addOrbitControls({ target: [0, 1, 0], maxPolarAngle: 1.45 })
+    this.common.addOrbitControls({ target: [0, 0.35, 0], maxPolarAngle: 1.45 })
     window.addEventListener("resize", this.resize.bind(this))
     this.setCamera()
     this.loop()
-    this.addBox()
-    this.addPlane()
+    // this.addBox()
+
     this.addSpotLight({
       helper: true,
       color: [1, 0.25, 0.7],
@@ -34,7 +34,10 @@ export default class App {
       penumbra: 0.5,
       position: [-5, 5, 0],
     })
-    console.log(this.common.scene)
+    this.addModel()
+    this.addRings()
+    this.addPlane()
+    // console.log(this.common.scene)
   }
 
   setCamera() {
@@ -76,10 +79,10 @@ export default class App {
       mesh,
       {
         resolution: 1024,
-        blur: [512, 128],
+        blur: [1000, 400],
         mixBlur: 30,
         mixContrast: 1,
-        mirror: 1,
+        mirror: 0,
         mixStrength: 80,
         depthScale: 0.01,
         minDepthThreshold: 0.9,
@@ -145,6 +148,63 @@ export default class App {
     if (helper) {
       const helper = new THREE.SpotLightHelper(spotLight)
       this.common?.scene?.add(helper)
+    }
+  }
+
+  async addModel() {
+    const gltf = await this.common.loadGLTF({
+      modelData: "/models/car/scene.gltf",
+    })
+    gltf.scene.scale.set(0.005, 0.005, 0.005)
+    gltf.scene.position.set(0, -0.035, 0)
+    gltf.scene.traverse((object) => {
+      if (object instanceof THREE.Mesh) {
+        object.castShadow = true
+        object.receiveShadow = true
+        object.material.envMapIntensity = 20
+      }
+    })
+    this.common?.scene?.add(gltf.scene)
+    console.log(gltf)
+  }
+
+  addRings() {
+    const amount = 14
+    for (let i = 0; i < amount; i++) {
+      const geo = new THREE.TorusGeometry(3.35, 0.05, 16, 100)
+      const mat = new THREE.MeshStandardMaterial({
+        color: 0x000000,
+        emissive: new THREE.Color([0.5, 0.5, 0.5]),
+      })
+      const mesh = new THREE.Mesh(geo, mat)
+
+      // pos
+      const posZ = (i - 7) * 3.5
+      mesh.position.set(0, 0.35, posZ)
+
+      // scale
+      const scale = 1 - Math.abs(posZ) * 0.04
+      mesh.scale.set(scale, scale, scale)
+
+      // color
+      let colorScale = 1
+      if (posZ < 20) {
+        colorScale = 1 - (Math.min(posZ, 12) - 2) / 10
+      }
+      colorScale *= 0.5
+
+      if (i % 2 === 1) {
+        mesh.material.emissive = new THREE.Color(6, 0.15, 0.7).multiplyScalar(
+          colorScale
+        )
+      } else {
+        mesh.material.emissive = new THREE.Color(0.1, 0.7, 3).multiplyScalar(
+          colorScale
+        )
+      }
+      mesh.castShadow = true
+      mesh.receiveShadow = true
+      this.common?.scene?.add(mesh)
     }
   }
 
