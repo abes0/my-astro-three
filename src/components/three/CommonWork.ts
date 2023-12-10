@@ -88,18 +88,19 @@ export default class CommonWork {
   }
 
   async loadGLTF({ modelData }: { modelData: string }) {
-    return new Promise(
-      (resolve) => {
-        new GLTFLoader().load(modelData, (gltf) => {
+    return new Promise((resolve) => {
+      new GLTFLoader().load(
+        modelData,
+        (gltf) => {
           resolve(gltf)
-        })
-      },
-      (progress) => {
-        console.log(progress)
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
+        },
+        (progress) => {
+          console.log(progress)
+        },
+        (error) => {
+          console.log(error)
+        }
+      )
+    })
   }
 }

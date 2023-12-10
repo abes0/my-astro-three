@@ -17,9 +17,6 @@ import {
   WebGLRenderTarget,
   WebGLRenderer,
   type Shader,
-  HalfFloatType,
-  UnsignedIntType,
-  FloatType,
 } from "three"
 import * as POSTPROCESSING from "postprocessing"
 
@@ -126,14 +123,13 @@ export default class MeshReflectorMaterial extends MeshStandardMaterial {
       minFilter: LinearFilter,
       magFilter: LinearFilter,
       colorSpace: this.gl?.outputColorSpace,
-      samples: 4,
     }
 
     const fbo1 = new WebGLRenderTarget(resolution, resolution, parameters)
     fbo1.depthBuffer = true
     fbo1.depthTexture = new DepthTexture(resolution, resolution)
     fbo1.depthTexture.format = DepthFormat
-    fbo1.depthTexture.type = UnsignedIntType
+    fbo1.depthTexture.type = UnsignedShortType
 
     const fbo2 = new WebGLRenderTarget(resolution, resolution, parameters)
 
@@ -297,7 +293,7 @@ export default class MeshReflectorMaterial extends MeshStandardMaterial {
   onBeforeCompile(shader: Shader, ...args: [WebGLRenderer]) {
     super.onBeforeCompile(shader, ...args)
 
-    if (this.defines === undefined) this.defines = {}
+    this.defines = {}
 
     if (!this.defines.USE_UV) {
       this.defines.USE_UV = ""
@@ -322,7 +318,7 @@ export default class MeshReflectorMaterial extends MeshStandardMaterial {
 
     shader.vertexShader = `
             uniform mat4 textureMatrix;
-            varying vec4 my_vUv;     
+            varying vec4 my_vUv;
           ${shader.vertexShader}`
 
     shader.vertexShader = shader.vertexShader.replace(

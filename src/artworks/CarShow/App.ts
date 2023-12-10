@@ -1,6 +1,8 @@
 import CommonWork from "@three/CommonWork"
 import * as THREE from "three"
 import MeshReflectorMaterial from "@three/MeshReflecrMaterial"
+// import { Reflector } from "three/examples/jsm/Addons.js"
+// import { Reflector } from "@three/Reflector"
 
 export default class App {
   common?: CommonWork
@@ -43,6 +45,7 @@ export default class App {
   setCamera() {
     this.common?.camera?.position.set(3, 2, 5)
     this.common?.camera?.lookAt(new THREE.Vector3(0, 0.35, 0))
+    console.log("camera", this.common?.camera)
     // this.common?.camera?.fov = 50
   }
 
@@ -68,9 +71,6 @@ export default class App {
     const geo = new THREE.PlaneGeometry(30, 30)
     const mat = new THREE.MeshStandardMaterial({ color: 0xeeeeee })
     const mesh = new THREE.Mesh(geo, mat)
-    mesh.rotateX(-Math.PI / 2)
-
-    this.common?.scene?.add(mesh)
 
     mesh.material = new MeshReflectorMaterial(
       this.common.renderer,
@@ -112,6 +112,21 @@ export default class App {
       roughness: 0.7,
     })
 
+    // Reflector =======
+    // const mesh = new Reflector(geo, {
+    //   clipBias: 0.003,
+    //   textureWidth: window.innerWidth * window.devicePixelRatio,
+    //   textureHeight: window.innerHeight * window.devicePixelRatio,
+    //   color: 0xb5b5b5,
+    //   normalMap: normal,
+    //   roughnessMap: roughness,
+    // })
+    // Reflector =======
+
+    mesh.rotateX(-Math.PI / 2)
+
+    this.common?.scene?.add(mesh)
+
     mesh.castShadow = true
     mesh.receiveShadow = true
 
@@ -152,20 +167,22 @@ export default class App {
   }
 
   async addModel() {
-    const gltf = await this.common.loadGLTF({
+    const gltf = (await this.common?.loadGLTF({
       modelData: "/models/car/scene.gltf",
-    })
-    gltf.scene.scale.set(0.005, 0.005, 0.005)
-    gltf.scene.position.set(0, -0.035, 0)
-    gltf.scene.traverse((object) => {
-      if (object instanceof THREE.Mesh) {
-        object.castShadow = true
-        object.receiveShadow = true
-        object.material.envMapIntensity = 20
-      }
-    })
-    this.common?.scene?.add(gltf.scene)
-    console.log(gltf)
+    })) as { scene: THREE.Scene }
+    if (gltf) {
+      gltf.scene.scale.set(0.005, 0.005, 0.005)
+      gltf.scene.position.set(0, -0.035, 0)
+      gltf.scene.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+          object.castShadow = true
+          object.receiveShadow = true
+          object.material.envMapIntensity = 20
+        }
+      })
+      this.common?.scene?.add(gltf.scene)
+      console.log(gltf)
+    }
   }
 
   addRings() {
@@ -174,7 +191,7 @@ export default class App {
       const geo = new THREE.TorusGeometry(3.35, 0.05, 16, 100)
       const mat = new THREE.MeshStandardMaterial({
         color: 0x000000,
-        emissive: new THREE.Color([0.5, 0.5, 0.5]),
+        emissive: new THREE.Color(0.5, 0.5, 0.5),
       })
       const mesh = new THREE.Mesh(geo, mat)
 
