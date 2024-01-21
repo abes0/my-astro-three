@@ -9,6 +9,7 @@
       "@artworks/*": ["src/artworks/*"],
       "@css/*": ["src/modules/css/*"],
       "@/*": ["src/*"]
-    }
+    },
+    "types": ["vite-plugin-glsl/ext"]
   }
 }
