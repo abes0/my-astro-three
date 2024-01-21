@@ -1,28 +1,40 @@
 import CommonWork from "@three/CommonWork"
+import * as THREE from "three"
 
 export default class TemplateArtwork {
-  common?: CommonWork
+  onMouseMove?(e: MouseEvent): void
+  onMouseDown?(e: MouseEvent): void
+  onMouseUp?(e: MouseEvent): void
+  onMouseUp?(e: MouseEvent): void
 
-  constructor($canvas: HTMLCanvasElement) {
-    this.init($canvas)
+  constructor() {
+    this.setup()
   }
 
-  init($canvas: HTMLCanvasElement) {
-    this.common = new CommonWork({ $canvas })
-    window.addEventListener("resize", this.resize.bind(this))
-    this.loop()
+  setup() {
+    window.addEventListener("resize", this.onResize.bind(this))
+
+    if (this.onMouseMove) {
+      window.addEventListener("mousemove", this.onMouseMove.bind(this), {
+        passive: true,
+      })
+    }
   }
 
-  resize() {
-    this.common?.resize()
+  onInit() {
+    this.onLoop()
   }
 
-  loop() {
-    this.render()
-    requestAnimationFrame(this.loop.bind(this))
+  onResize() {
+    CommonWork?.resize()
   }
 
-  render() {
-    this.common?.render()
+  onLoop() {
+    this.onRender()
+    requestAnimationFrame(this.onLoop.bind(this))
+  }
+
+  onRender() {
+    CommonWork?.render()
   }
 }

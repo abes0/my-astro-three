@@ -5,48 +5,53 @@ import MeshReflectorMaterial from "@three/MeshReflecrMaterial"
 // import { Reflector } from "@three/Reflector"
 
 export default class App {
-  common?: CommonWork
+  common?: typeof CommonWork
   groundMesh?: any
+  cubeCamera?: THREE.CubeCamera
+  cubeCameraTarget?: THREE.WebGLCubeRenderTarget
+  model?: any
 
-  constructor($canvas: HTMLCanvasElement) {
-    this.init($canvas)
+  constructor() {
+    this.init()
   }
 
-  init($canvas: HTMLCanvasElement) {
-    this.common = new CommonWork({ $canvas })
-    this.common.addOrbitControls({ target: [0, 0.35, 0], maxPolarAngle: 1.45 })
+  init() {
+    this.common = CommonWork
+    CommonWork.addOrbitControls({ target: [0, 0.35, 0], maxPolarAngle: 1.45 })
     window.addEventListener("resize", this.resize.bind(this))
     this.setCamera()
-    this.loop()
+    this.addRings()
+    CommonWork.addCubeCamera()
     // this.addBox()
 
-    this.addSpotLight({
-      helper: true,
+    CommonWork.addSpotLight({
+      // helper: true,
       color: [1, 0.25, 0.7],
       intensity: 150,
       angle: 0.6,
       penumbra: 0.5,
       position: [5, 5, 0],
     })
-    this.addSpotLight({
-      helper: true,
+    CommonWork.addSpotLight({
+      // helper: true,
       color: [0.14, 0.5, 1],
       intensity: 150,
       angle: 0.6,
       penumbra: 0.5,
       position: [-5, 5, 0],
     })
+
     this.addModel()
-    this.addRings()
+    // this.addSphere()
+
     this.addPlane()
-    // console.log(this.common.scene)
+
+    this.loop()
   }
 
   setCamera() {
-    this.common?.camera?.position.set(3, 2, 5)
-    this.common?.camera?.lookAt(new THREE.Vector3(0, 0.35, 0))
-    console.log("camera", this.common?.camera)
-    // this.common?.camera?.fov = 50
+    CommonWork?.camera?.position.set(3, 2, 5)
+    CommonWork?.camera?.lookAt(new THREE.Vector3(0, 0.35, 0))
   }
 
   addBox() {
@@ -57,15 +62,31 @@ export default class App {
     mesh.castShadow = true
     mesh.receiveShadow = true
     // mesh.material.envMapIntensity = 20
-    this.common?.scene?.add(mesh)
+    CommonWork?.scene?.add(mesh)
+  }
+
+  addSphere() {
+    const geo = new THREE.SphereGeometry(1, 32, 32)
+    const mat = new THREE.MeshStandardMaterial({
+      color: 0xff0000,
+      envMap: this.cubeCameraTarget?.texture,
+      roughness: 0.05,
+      metalness: 1,
+    })
+    const mesh = new THREE.Mesh(geo, mat)
+    mesh.position.set(0, 0.35, 0)
+    mesh.castShadow = true
+    mesh.receiveShadow = true
+    // mesh.material.envMapIntensity = 20
+    CommonWork?.scene?.add(mesh)
   }
 
   addPlane() {
     if (
-      !this.common ||
-      !this.common.renderer ||
-      !this.common?.camera ||
-      !this.common?.scene
+      !CommonWork ||
+      !CommonWork.renderer ||
+      !CommonWork?.camera ||
+      !CommonWork?.scene
     )
       return
     const geo = new THREE.PlaneGeometry(30, 30)
@@ -73,9 +94,9 @@ export default class App {
     const mesh = new THREE.Mesh(geo, mat)
 
     mesh.material = new MeshReflectorMaterial(
-      this.common.renderer,
-      this.common?.camera,
-      this.common?.scene,
+      CommonWork.renderer,
+      CommonWork?.camera,
+      CommonWork?.scene,
       mesh,
       {
         resolution: 1024,
@@ -112,20 +133,9 @@ export default class App {
       roughness: 0.7,
     })
 
-    // Reflector =======
-    // const mesh = new Reflector(geo, {
-    //   clipBias: 0.003,
-    //   textureWidth: window.innerWidth * window.devicePixelRatio,
-    //   textureHeight: window.innerHeight * window.devicePixelRatio,
-    //   color: 0xb5b5b5,
-    //   normalMap: normal,
-    //   roughnessMap: roughness,
-    // })
-    // Reflector =======
-
     mesh.rotateX(-Math.PI / 2)
 
-    this.common?.scene?.add(mesh)
+    CommonWork?.scene?.add(mesh)
 
     mesh.castShadow = true
     mesh.receiveShadow = true
@@ -133,55 +143,34 @@ export default class App {
     this.groundMesh = mesh
   }
 
-  addSpotLight({
-    helper = false,
-    color = [1, 0, 0],
-    intensity = 1,
-    distance = 0,
-    angle = Math.PI / 2,
-    penumbra = 0,
-    position = [0, 1, 0],
-  }: {
-    helper?: boolean
-    color?: number[]
-    intensity?: number
-    distance?: number
-    angle?: number
-    penumbra?: number
-    position?: number[]
-  } = {}) {
-    const spotLight = new THREE.SpotLight(
-      new THREE.Color(...color),
-      intensity,
-      distance,
-      angle,
-      penumbra
-    )
-    spotLight.castShadow = true
-    spotLight.position.set(position[0], position[1], position[2])
-    this.common?.scene?.add(spotLight)
-    if (helper) {
-      const helper = new THREE.SpotLightHelper(spotLight)
-      this.common?.scene?.add(helper)
-    }
-  }
-
   async addModel() {
-    const gltf = (await this.common?.loadGLTF({
+    const gltf = (await CommonWork?.loadGLTF({
       modelData: "/models/car/scene.gltf",
-    })) as { scene: THREE.Scene }
+    })) as { scene: any }
     if (gltf) {
       gltf.scene.scale.set(0.005, 0.005, 0.005)
       gltf.scene.position.set(0, -0.035, 0)
-      gltf.scene.traverse((object) => {
-        if (object instanceof THREE.Mesh) {
-          object.castShadow = true
-          object.receiveShadow = true
-          object.material.envMapIntensity = 20
+      gltf.scene.traverse(
+        (object: {
+          castShadow: boolean
+          receiveShadow: boolean
+          material: { envMapIntensity: number }
+        }) => {
+          if (object instanceof THREE.Mesh) {
+            object.castShadow = true
+            object.receiveShadow = true
+            object.material.envMapIntensity = 40
+            object.material.metalness = 2
+            object.material.roughness = 5
+            object.material.envMap = CommonWork?.cubeCameraTarget[0]?.texture
+          }
         }
-      })
-      this.common?.scene?.add(gltf.scene)
-      console.log(gltf)
+      )
+      gltf.scene.castShadow = true
+      gltf.scene.receiveShadow = true
+      gltf.scene.envMap = CommonWork?.cubeCameraTarget[0]?.texture
+      this.model = gltf.scene
+      CommonWork?.scene?.add(gltf.scene)
     }
   }
 
@@ -221,12 +210,12 @@ export default class App {
       }
       mesh.castShadow = true
       mesh.receiveShadow = true
-      this.common?.scene?.add(mesh)
+      CommonWork?.scene?.add(mesh)
     }
   }
 
   resize() {
-    this.common?.resize()
+    CommonWork?.resize()
   }
 
   loop() {
@@ -236,6 +225,6 @@ export default class App {
 
   render() {
     this.groundMesh?.material.update()
-    this.common?.render()
+    CommonWork?.render()
   }
 }
