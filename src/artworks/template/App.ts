@@ -8,7 +8,7 @@ export default class App extends TemplateArtwork {
     CommonWork.addAmbientLight()
     CommonWork.addSpotLight()
     CommonWork.addOrbitControls()
-    CommonWork.addBox()
+    CommonWork.addExampleBox()
     console.log(CommonWork.scene)
     this.onInit()
   }
