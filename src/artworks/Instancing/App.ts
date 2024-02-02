@@ -140,7 +140,7 @@ export default class App extends TemplateArtwork {
       transparent: true,
     })
 
-    const mesh = new THREE.Line(geo, mat)
+    const mesh = new THREE.Mesh(geo, mat)
     CommonWork.scene?.add(mesh)
 
     this.mesh = mesh
