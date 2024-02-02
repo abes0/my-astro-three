@@ -198,7 +198,7 @@ class CommonWork {
     this.scene?.add(ambientLight)
   }
 
-  addDrirectionalLight({}) {
+  addDrirectionalLight() {
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
     directionalLight.castShadow = true
     directionalLight.position.set(1, 1, 1)
