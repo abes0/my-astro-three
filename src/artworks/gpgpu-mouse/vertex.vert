@@ -19,7 +19,7 @@ void main() {
   // ポイントのサイズを決定
   vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
   // float cameraConstant = 4700.;
-  gl_PointSize = 1.5 * cameraConstant / ( - mvPosition.z );
+  gl_PointSize = 1.0 * cameraConstant / ( - mvPosition.z );
   // gl_PointSize = 1.0;
   // uv情報の引き渡し
   vUv = uv;
