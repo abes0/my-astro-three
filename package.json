@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.3.1",
+    "@tweakpane/core": "^2.0.3",
     "astro": "^3.6.2",
     "postprocessing": "^6.33.4",
     "three": "^0.159.0",
+    "tweakpane": "^4.0.3",
     "typescript": "^5.3.2",
     "vite-plugin-glsl": "^1.2.1"
   },
