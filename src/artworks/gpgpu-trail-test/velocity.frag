@@ -139,7 +139,7 @@ float snoise(vec4 v)
 // }
 const float spreadRange = 1500.0; // 頂点の範囲
 const float interval = 1.; // 頂点同士の間隔。小さければ小さいほど滑らか
-const float scatter = 0.001; // 線の散らばり具合。
+const float scatter = 0.003; // 線の散らばり具合。
 const float scale = 0.001; // spreadRangeのサイズ調整
 
 
