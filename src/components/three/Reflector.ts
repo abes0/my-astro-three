@@ -14,11 +14,11 @@ import {
   type NormalBufferAttributes,
   Scene,
   WebGLRenderer,
-  Material,
+  // Material,
   LinearFilter,
   DepthTexture,
   DepthFormat,
-  UnsignedShortType,
+  // UnsignedShortType,
   UnsignedIntType,
 } from "three"
 import * as POSTPROCESSING from "postprocessing"

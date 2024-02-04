@@ -1,5 +1,4 @@
 import CommonWork from "@three/CommonWork"
-import * as THREE from "three"
 
 export default class TemplateArtwork {
   onMouseMove?(e: MouseEvent): void

@@ -152,7 +152,7 @@ class CommonWork {
     this.time.total += this.time.delta
 
     if (this.cubeCamera.length > 0) {
-      this.cubeCamera.forEach((cubeCamera, i) => {
+      this.cubeCamera.forEach((cubeCamera) => {
         cubeCamera.update(this.renderer!, this.scene!)
       })
     }

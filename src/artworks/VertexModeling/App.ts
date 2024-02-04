@@ -1,6 +1,6 @@
 import CommonWork from "@three/CommonWork"
 import TemplateArtwork from "@three/TemplateArtwork"
-import CalcShape from "@three/calcShape"
+import CalcShape from "@three/CalcShape"
 import * as THREE from "three"
 
 import fs from "./fragment.frag?raw"
@@ -52,18 +52,10 @@ export default class App extends TemplateArtwork {
       if (this.uni)
         this.uni.uProgress.value = new THREE.Vector4(b[0], b[1], b[2], b[3])
     }
-    const bind1 = pane
-      .addBinding(this.params, "shape1", range)
-      .on("change", onChange)
-    const bind2 = pane
-      .addBinding(this.params, "shape2", range)
-      .on("change", onChange)
-    const bind3 = pane
-      .addBinding(this.params, "shape3", range)
-      .on("change", onChange)
-    const bind4 = pane
-      .addBinding(this.params, "shape4", range)
-      .on("change", onChange)
+    pane.addBinding(this.params, "shape1", range).on("change", onChange)
+    pane.addBinding(this.params, "shape2", range).on("change", onChange)
+    pane.addBinding(this.params, "shape3", range).on("change", onChange)
+    pane.addBinding(this.params, "shape4", range).on("change", onChange)
   }
 
   createMesh(): void {

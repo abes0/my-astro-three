@@ -7,19 +7,19 @@ import {
   Matrix4,
   Mesh,
   MeshStandardMaterial,
-  Object3D,
+  // Object3D,
   PerspectiveCamera,
   Plane,
   Scene,
-  UnsignedShortType,
+  // UnsignedShortType,
   Vector3,
   Vector4,
   WebGLRenderTarget,
   WebGLRenderer,
   type Shader,
-  HalfFloatType,
+  // HalfFloatType,
   UnsignedIntType,
-  FloatType,
+  // FloatType,
 } from "three"
 import * as POSTPROCESSING from "postprocessing"
 

@@ -9,7 +9,7 @@ import vs from "./vertex.vert?raw"
 import GPGPUSimulation from "@three/GPGPUSimulation"
 
 const WIDTH = 100
-const NUMBER = WIDTH * WIDTH
+// const NUMBER = WIDTH * WIDTH
 
 export default class App extends TemplateArtwork {
   computeRenderer?: GPUComputationRenderer

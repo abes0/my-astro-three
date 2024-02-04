@@ -8,7 +8,7 @@ import NurbsLine from "./NurbsLine"
 
 // const nurbsControlPoints: THREE.Vector4[] = []
 // const nurbsKnots: number[] = []
-const nurbsDegree = 300
+// const nurbsDegree = 300
 const nurbsSize = 5
 const LINE_COUNT = 1
 

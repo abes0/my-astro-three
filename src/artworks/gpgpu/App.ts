@@ -10,7 +10,7 @@ import vs from "./vertex.vert?raw"
 const WIDTH = 500
 const SIZE = 500
 const PARTICLES = WIDTH * WIDTH
-const target = [0, 10, -200]
+// const target = [0, 10, -200]
 
 export default class App extends TemplateArtwork {
   gpuCompute?: GPUComputationRenderer
