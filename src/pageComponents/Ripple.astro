@@ -1,0 +1,19 @@
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout>
+<canvas id="canvas"></canvas>
+</Layout>
+
+<script>
+  import Component from '@common/Component'
+  import App from '@artworks/Ripple/App'
+   new class extends Component {
+    static selectorRoot = '#canvas'
+    app: App | undefined
+    init(): void {
+      this.app = new App()
+    }
+  }
+</script>
