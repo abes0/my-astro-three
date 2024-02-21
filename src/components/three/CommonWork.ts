@@ -3,6 +3,9 @@ import { OrbitControls } from "three/examples/jsm/Addons.js"
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"
 
 const vertexExample = `
+  precision highp float;
+  attribute vec3 position;
+  attribute vec2 uv;
   varying vec2 vUv;
   void main()	{
     vUv = uv;
@@ -11,6 +14,7 @@ const vertexExample = `
 `
 
 const fragmentExample = `
+  precision highp float;
   varying vec2 vUv;
   void main()	{
     gl_FragColor = vec4( vUv, 0.0, 1.0 );
@@ -31,9 +35,11 @@ class CommonWork {
   cubeCameraTarget: THREE.WebGLCubeRenderTarget[] = []
   isCameraSyncScreen: boolean = false
   fovy?: number
+  canvas: HTMLCanvasElement
 
   constructor({ $canvas }: { $canvas: HTMLCanvasElement }) {
     if ($canvas) {
+      this.canvas = $canvas
       this.init($canvas)
     } else {
       throw new Error("canvas is null")
@@ -158,6 +164,7 @@ class CommonWork {
     }
 
     if (this.renderer && this.scene && this.camera) {
+      this.renderer.setRenderTarget(null)
       this.renderer.render(this.scene, this.camera)
       // console.log(this.camera)
     }
@@ -282,26 +289,57 @@ class CommonWork {
 
     mesh.position.set(0, 0, 0)
     this.scene?.add(mesh)
+
+    return mesh
   }
 
   addShaderPlane({
     uniform = {},
     vertexShader = vertexExample,
     fragmentShader = fragmentExample,
+    isRawShader = true,
   }: {
     uniform?: Record<string, { value: any }>
     vertexShader?: string
     fragmentShader?: string
-  }) {
+    isRawShader?: boolean
+  } = {}) {
     const geo = new THREE.PlaneGeometry(2, 2)
-    const mat = new THREE.ShaderMaterial({
-      uniforms: uniform,
-      vertexShader,
-      fragmentShader,
-    })
+
+    const mat = isRawShader
+      ? new THREE.RawShaderMaterial({
+          uniforms: uniform,
+          vertexShader,
+          fragmentShader,
+        })
+      : new THREE.ShaderMaterial({
+          uniforms: uniform,
+          vertexShader,
+          fragmentShader,
+        })
 
     const mesh = new THREE.Mesh(geo, mat)
     this.scene?.add(mesh)
+
+    return mesh
+  }
+
+  createFBO(
+    {
+      width,
+      height,
+    }: {
+      width?: number
+      height?: number
+    } = { width: this.size.sw, height: this.size.sh }
+  ) {
+    const fbo = new THREE.WebGLRenderTarget(width, height, {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      format: THREE.RGBAFormat,
+      type: THREE.HalfFloatType,
+    })
+    return fbo
   }
 }
 
