@@ -56,7 +56,7 @@ class CommonWork {
       0.1,
       10000
     )
-    this.camera.position.set(0, 3, -3)
+    this.camera.position.set(0, 0, 5)
     this.camera.lookAt(new THREE.Vector3(0, 0, 0))
 
     this.renderer = new THREE.WebGLRenderer({
@@ -152,7 +152,7 @@ class CommonWork {
     if (this.renderer) this.renderer.setSize(this.size.sw, this.size.sh)
   }
 
-  render() {
+  render(scene: THREE.Scene, camera: THREE.Camera) {
     if (!this.clock) return
     this.time.delta = this.clock.getDelta()
     this.time.total += this.time.delta
@@ -163,9 +163,9 @@ class CommonWork {
       })
     }
 
-    if (this.renderer && this.scene && this.camera) {
+    if (this.renderer && scene && camera) {
       this.renderer.setRenderTarget(null)
-      this.renderer.render(this.scene, this.camera)
+      this.renderer.render(scene, camera)
       // console.log(this.camera)
     }
   }

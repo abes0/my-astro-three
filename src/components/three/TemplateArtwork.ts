@@ -33,7 +33,10 @@ export default class TemplateArtwork {
     requestAnimationFrame(this.onLoop.bind(this))
   }
 
-  onRender() {
-    CommonWork?.render()
+  onRender(
+    scene: THREE.Scene = CommonWork?.scene!,
+    camera: THREE.Camera = CommonWork?.camera!
+  ) {
+    CommonWork?.render(scene, camera)
   }
 }

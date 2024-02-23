@@ -7,8 +7,12 @@ export default class Interaction {
   coord_old: THREE.Vector2 = new THREE.Vector2(0, 0)
   vec: THREE.Vector2 = new THREE.Vector2(0, 0)
 
-  init() {
-    window.addEventListener("mousemove", this.eMouseMove.bind(this))
+  init(callback?: (e: MouseEvent) => void) {
+    const handler = (e: MouseEvent) => {
+      this.eMouseMove(e)
+      if (callback) callback(e)
+    }
+    window.addEventListener("mousemove", handler, { passive: true })
   }
 
   eMouseMove(e: MouseEvent) {
