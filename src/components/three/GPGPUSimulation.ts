@@ -21,6 +21,7 @@ export default class GPGPUSimulation {
     const texture = this.gpuComp.createTexture()
     const variable = this.gpuComp.addVariable(name, shader, texture)
     this.variables[name] = { texture: variable, uniforms: null }
+    return texture
   }
 
   setDepend() {
