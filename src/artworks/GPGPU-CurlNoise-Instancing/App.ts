@@ -64,6 +64,8 @@ export default class App extends TemplateArtwork {
       uWidth: WIDTH / 2,
       uMouse: this.mouse?.pos,
       uMouseForce: new THREE.Vector2(0, 0),
+      uTouchIP: 0,
+      uIsTouch: false,
     }
 
     if (this.fboUni) {
@@ -151,6 +153,8 @@ export default class App extends TemplateArtwork {
     if (this.fboUni) {
       this.fboUni.uTime = CommonWork.time.total
       this.fboUni.uMouseForce = this.mouse?.vec
+      this.fboUni.uTouchIP = this.mouse?.activeIP
+      this.fboUni.uIsTouch = this.mouse?.isTouchDevice()
     }
 
     this.simulation?.update(this.fboUni!)

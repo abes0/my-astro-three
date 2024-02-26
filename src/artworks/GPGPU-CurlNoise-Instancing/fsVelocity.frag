@@ -2,6 +2,8 @@ uniform float uTime;
 uniform float uWidth;
 uniform vec2 uMouse;
 uniform vec2 uMouseForce;
+uniform float uTouchIP;
+uniform bool uIsTouch;
 float PI = 3.1415926535897932384626433832795;
 
 void main() {
@@ -19,7 +21,12 @@ void main() {
   float mouseForce = length(uMouseForce);
   float dist = length(pos.xy - uMouse);
   vec2 dir = normalize(pos.xy - uMouse);
-  vel.xy += dir * smoothstep(1.2 * 100., 0.0, dist) * 300.* mouseForce;
+
+  float touchStartForce = 1.0;
+  if(uIsTouch){
+    touchStartForce = uTouchIP;
+  }
+  vel.xy += dir * smoothstep(1.2 * 100., 0.0, dist) * 300.* mouseForce * touchStartForce;
 
   gl_FragColor = vel;
 }

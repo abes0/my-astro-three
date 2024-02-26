@@ -1,6 +1,7 @@
 import CommonWork from "@three/CommonWork"
 import * as THREE from "three"
 import whatInput from "what-input"
+import { gsap } from "gsap"
 
 export default class Interaction {
   pos: THREE.Vector2 = new THREE.Vector2(0, 0)
@@ -8,6 +9,7 @@ export default class Interaction {
   coord_old: THREE.Vector2 = new THREE.Vector2(0, 0)
   vec: THREE.Vector2 = new THREE.Vector2(0, 0)
   isTouchActive: boolean = false
+  activeIP: number = 0
 
   init(callback?: (e: MouseEvent) => void) {
     const handler = (e: MouseEvent) => {
@@ -43,6 +45,12 @@ export default class Interaction {
 
   eTouchStart(e: TouchEvent) {
     this.isTouchActive = true
+    gsap.to(this, {
+      activeIP: 1,
+      duration: 0.5,
+      ease: "power2.out",
+      overwrite: true,
+    })
     const touch = e.touches[0]
     this.setPos(touch.clientX, touch.clientY)
     this.setCoord(touch.clientX, touch.clientY)
@@ -50,6 +58,12 @@ export default class Interaction {
 
   eTouchEnd(e: TouchEvent) {
     this.isTouchActive = false
+    gsap.to(this, {
+      activeIP: 0,
+      duration: 0.5,
+      ease: "power2.out",
+      overwrite: true,
+    })
   }
 
   update() {
