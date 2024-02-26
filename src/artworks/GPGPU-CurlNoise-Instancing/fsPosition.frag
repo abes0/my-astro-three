@@ -1,5 +1,6 @@
 uniform float uTime;
 uniform float uWidth;
+// uniform vec2 uTestMouse;
 // uniform sampler2D textureVelocity;
 // uniform float progress;
 // uniform sampler2D texturePosition;
@@ -281,42 +282,33 @@ vec3 curlNoise( vec3 p ){
 //     return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 // }
 
+// void main() {
+//   vec2 uv = gl_FragCoord.xy / resolution.xy;
+//   vec3 pos = texture2D(texturePosition, uv).xyz;
+//   vec3 vel = texture2D(textureVelocity, uv).xyz;
+//   float radius = length(pos.xy);
+//   float force = 1. - smoothstep(0.3, 1.4, radius);
+//   float angle = atan(pos.y, pos.x) - vel.x * 0.1 * mix(0.3, 1.4, force);
+//   float targetRadius = mix(vel.y * uWidth * 3.0, uWidth * 1.0, 0.5 + 0.25 * sin(angle * 2. + uTime * 0.2));
+//   radius += (targetRadius - radius) * 0.01;
+//   vec3 targetPos = vec3(cos(angle), sin(angle), 0.) * radius;
+//   pos.xy += (targetPos.xy - pos.xy) * 0.3;
+//   // pos += curlNoise(pos / (uWidth * 10.0)) * mix( 5.3, 10.6, force);
+  
+//   gl_FragColor = vec4(pos, 1.0);
+// }
 
-uniform float timer;
-uniform float delta;
-uniform float speed;
-// uniform float genScale;
-uniform float factor;
-uniform float evolution;
-uniform float radius;
 void main() {
   vec2 uv = gl_FragCoord.xy / resolution.xy;
   vec3 pos = texture2D(texturePosition, uv).xyz;
   vec3 vel = texture2D(textureVelocity, uv).xyz;
+  
+  pos.xy += vel.xy * 1.0;
+
   float radius = length(pos.xy);
   float force = 1. - smoothstep(0.3, 1.4, radius);
-  // float angle = atan(pos.y, pos.x) + vel.x * 0.1 * mix(0.5, 1.0, force);
-  float angle = atan(pos.y, pos.x) - vel.x * 0.1 * mix(0.3, 1.4, force);
-  // float angleZ = atan(pos.z, length(pos.xy)) + 0.1;
+  pos += curlNoise(pos / (uWidth * 10.0)) * mix( 2.3, 7.6, force);
 
-  // float targetRadius = mix(vel.x, 1.8, 0.5 + 0.45 * sin(angle * 2. + uTime * 0.2));
-  float targetRadius = mix(vel.y * uWidth * 3.0, uWidth * 1.0, 0.5 + 0.25 * sin(angle * 2. + uTime * 0.2));
-  radius += (targetRadius - radius) * 0.01;
-  // float angleZ = atan(pos.z, length(pos.xy)) - 0.1;
-  vec3 targetPos = vec3(cos(angle), sin(angle), 0.) * radius;
-  pos.xy += (targetPos.xy - pos.xy) * 0.3;
-  // pos += curl(pos.xyz * 4000000000., uTime * 0.1, 0.1) * 0.07;
-  pos += curlNoise(pos / (uWidth * 10.0)) * mix( 5.3, 10.6, force);
-  // targetPos.z = pos.z;
-  // pos.xy += (targetPos.xy - pos.xy) * 0.1;
-  // float angle = atan(pos.y, pos.x) - vel.x * 0.3 * mix(0.5, 1.0, force);
-  // float targetRadius = mix(vel.x, 1.8, 0.5 + 0.45 * sin(angle * 2. + uTime * 0.2));
-  // radius += (targetRadius - radius) * mix(0.1, 0.05, force);
-  // vec3 targetPos = vec3(cos(angle), sin(angle), 0.0) * radius;
-  // pos += (targetPos - pos) * 0.1;
-  // pos += vec3(cos(angle + uTime * 0.5) * 0.1, sin(angle + uTime * 0.5) * 0.1, 0.0);
-  // pos += vel * angle * 0.1;
-  // gl_FragColor = vec4(uv, 0.0, 1.0);
-  // pos += curlNoise(pos) * force * 10.0;
   gl_FragColor = vec4(pos, 1.0);
+  // gl_FragColor = vec4(uTestMouse, 0.0, 1.0);
 }

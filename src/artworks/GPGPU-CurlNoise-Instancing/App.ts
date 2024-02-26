@@ -8,9 +8,11 @@ import fs from "./fs.frag?raw"
 import fsPosition from "./fsPosition.frag?raw"
 import fsVelocity from "./fsVelocity.frag?raw"
 import type { IUniform } from "three"
+import Interaction from "@common/Interaction"
 
-const size = 256
+const size = 128
 const WIDTH = 200
+const boxSize = 10
 
 export default class App extends TemplateArtwork {
   simulation?: GPGPUSimulation
@@ -18,6 +20,13 @@ export default class App extends TemplateArtwork {
   boxesUni?: {
     [uniform: string]: IUniform<any>
   }
+  mouse?: Interaction
+  rayCaster?: THREE.Raycaster
+  // p: THREE.Mesh<
+  //   THREE.PlaneGeometry,
+  //   THREE.MeshLambertMaterial,
+  //   THREE.Object3DEventMap
+  // >
 
   constructor() {
     super()
@@ -27,10 +36,14 @@ export default class App extends TemplateArtwork {
     CommonWork.cameraSyncScreen()
     // CommonWork.addExampleBox()
     console.log(CommonWork.scene)
+    this.mouse = new Interaction()
+    // this.rayCaster = new THREE.Raycaster()
+    // this.p = CommonWork.addPlane()
     this.onInit()
   }
 
   onInit(): void {
+    this.mouse?.init(this.eMouseMove.bind(this))
     this.setupFBO()
     this.addBoxes()
     super.onInit()
@@ -57,6 +70,8 @@ export default class App extends TemplateArtwork {
     this.fboUni = {
       uTime: 0,
       uWidth: WIDTH / 2,
+      uMouse: this.mouse?.pos,
+      uMouseForce: new THREE.Vector2(0, 0),
     }
 
     if (this.fboUni) {
@@ -89,14 +104,13 @@ export default class App extends TemplateArtwork {
         data[index + 0] = Math.random()
         data[index + 1] = Math.random()
         data[index + 2] = Math.random()
-        data[index + 3] = 1
+        data[index + 3] = Math.random()
       }
     }
     texture.image.data = data
   }
 
   addBoxes() {
-    const boxSize = 20
     const box = new THREE.BoxGeometry(boxSize, boxSize, boxSize)
     const geo = new THREE.InstancedBufferGeometry()
     geo.index = box.index
@@ -116,11 +130,15 @@ export default class App extends TemplateArtwork {
     this.boxesUni = {
       texturePosition: { value: null },
       textureVelocity: { value: null },
+      uMouse: { value: this.mouse?.pos },
+      uTime: { value: 0 },
     }
     const mat = new THREE.ShaderMaterial({
       uniforms: this.boxesUni,
       vertexShader: vs,
       fragmentShader: fs,
+      // depthTest: false,
+      // depthWrite: false,
     })
 
     const mesh = new THREE.Mesh(geo, mat)
@@ -130,11 +148,23 @@ export default class App extends TemplateArtwork {
     CommonWork.scene?.add(mesh)
   }
 
+  eMouseMove() {
+    if (this.fboUni) {
+      this.fboUni.uMouse.set(this.mouse?.pos.x!, this.mouse?.pos.y!)
+    }
+  }
+
   onRender(): void {
+    this.mouse?.update()
     if (this.fboUni) {
       this.fboUni.uTime = CommonWork.time.total
-      // console.log(this.fboUni.uTime)
+      this.fboUni.uMouseForce = this.mouse?.vec
     }
+
+    // for debug
+    // if (this.p) {
+    //   this.p?.position.set(this.mouse?.pos.x!, this.mouse?.pos.y!, 0)
+    // }
 
     this.simulation?.update(this.fboUni!)
     if (this.boxesUni) {
@@ -142,6 +172,8 @@ export default class App extends TemplateArtwork {
         this.simulation?.getTexture("texturePosition")
       this.boxesUni.textureVelocity.value =
         this.simulation?.getTexture("textureVelocity")
+      this.boxesUni.uTime.value = CommonWork.time.total
+      // this.boxesUni.uMouse.value.set(this.mouse?.pos.x!, this.mouse?.pos.y!)
     }
 
     super.onRender()
