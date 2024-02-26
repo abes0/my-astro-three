@@ -22,11 +22,6 @@ export default class App extends TemplateArtwork {
   }
   mouse?: Interaction
   rayCaster?: THREE.Raycaster
-  // p: THREE.Mesh<
-  //   THREE.PlaneGeometry,
-  //   THREE.MeshLambertMaterial,
-  //   THREE.Object3DEventMap
-  // >
 
   constructor() {
     super()
@@ -34,15 +29,12 @@ export default class App extends TemplateArtwork {
     CommonWork.addSpotLight()
     CommonWork.addOrbitControls()
     CommonWork.cameraSyncScreen()
-    // CommonWork.addExampleBox()
-    console.log(CommonWork.scene)
     this.mouse = new Interaction()
-    // this.rayCaster = new THREE.Raycaster()
-    // this.p = CommonWork.addPlane()
     this.onInit()
   }
 
   onInit(): void {
+    CommonWork.renderer?.setClearColor(0x03011c)
     this.mouse?.init(this.eMouseMove.bind(this))
     this.setupFBO()
     this.addBoxes()
@@ -161,11 +153,6 @@ export default class App extends TemplateArtwork {
       this.fboUni.uMouseForce = this.mouse?.vec
     }
 
-    // for debug
-    // if (this.p) {
-    //   this.p?.position.set(this.mouse?.pos.x!, this.mouse?.pos.y!, 0)
-    // }
-
     this.simulation?.update(this.fboUni!)
     if (this.boxesUni) {
       this.boxesUni.texturePosition.value =
@@ -173,7 +160,6 @@ export default class App extends TemplateArtwork {
       this.boxesUni.textureVelocity.value =
         this.simulation?.getTexture("textureVelocity")
       this.boxesUni.uTime.value = CommonWork.time.total
-      // this.boxesUni.uMouse.value.set(this.mouse?.pos.x!, this.mouse?.pos.y!)
     }
 
     super.onRender()
