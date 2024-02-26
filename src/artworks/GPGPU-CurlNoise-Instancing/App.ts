@@ -27,7 +27,7 @@ export default class App extends TemplateArtwork {
     super()
     CommonWork.addAmbientLight()
     CommonWork.addSpotLight()
-    CommonWork.addOrbitControls()
+    // CommonWork.addOrbitControls()
     CommonWork.cameraSyncScreen()
     this.mouse = new Interaction()
     this.onInit()
