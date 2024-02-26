@@ -225,6 +225,6 @@ export default class App {
 
   render() {
     this.groundMesh?.material.update()
-    CommonWork?.render()
+    CommonWork?.render(CommonWork.scene!, CommonWork.camera!)
   }
 }
