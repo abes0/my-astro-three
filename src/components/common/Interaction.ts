@@ -1,11 +1,13 @@
 import CommonWork from "@three/CommonWork"
 import * as THREE from "three"
+import whatInput from "what-input"
 
 export default class Interaction {
   pos: THREE.Vector2 = new THREE.Vector2(0, 0)
   coord: THREE.Vector2 = new THREE.Vector2(0, 0)
   coord_old: THREE.Vector2 = new THREE.Vector2(0, 0)
   vec: THREE.Vector2 = new THREE.Vector2(0, 0)
+  isTouchActive: boolean = false
 
   init(callback?: (e: MouseEvent) => void) {
     const handler = (e: MouseEvent) => {
@@ -13,11 +15,41 @@ export default class Interaction {
       if (callback) callback(e)
     }
     window.addEventListener("mousemove", handler, { passive: true })
+    window.addEventListener("touchmove", this.eTouchMove.bind(this), {
+      passive: true,
+    })
+    window.addEventListener("touchstart", this.eTouchStart.bind(this), {
+      passive: true,
+    })
+    window.addEventListener("touchend", this.eTouchEnd.bind(this), {
+      passive: true,
+    })
+  }
+
+  isTouchDevice() {
+    return whatInput.ask("intent") === "touch"
   }
 
   eMouseMove(e: MouseEvent) {
     this.setPos(e.clientX, e.clientY)
     this.setCoord(e.clientX, e.clientY)
+  }
+
+  eTouchMove(e: TouchEvent) {
+    const touch = e.touches[0]
+    this.setPos(touch.clientX, touch.clientY)
+    this.setCoord(touch.clientX, touch.clientY)
+  }
+
+  eTouchStart(e: TouchEvent) {
+    this.isTouchActive = true
+    const touch = e.touches[0]
+    this.setPos(touch.clientX, touch.clientY)
+    this.setCoord(touch.clientX, touch.clientY)
+  }
+
+  eTouchEnd(e: TouchEvent) {
+    this.isTouchActive = false
   }
 
   update() {
@@ -38,7 +70,10 @@ export default class Interaction {
   }
 
   setVec() {
-    this.vec.subVectors(this.coord, this.coord_old)
+    if (this.coord_old.x !== 0 && this.coord_old.y !== 0) {
+      this.vec.subVectors(this.coord, this.coord_old)
+    }
+
     this.coord_old.copy(this.coord)
     // console.log(this.vec.x, this.vec.y)
   }
