@@ -53,7 +53,7 @@ class CommonWork {
     this.camera = new THREE.PerspectiveCamera(
       45,
       this.size.sw / this.size.sh,
-      0.1,
+      0.01,
       10000
     )
     this.camera.position.set(0, 0, 5)
