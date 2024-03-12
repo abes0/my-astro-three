@@ -1,36 +1,140 @@
 import CommonWork from "@three/CommonWork"
 import TemplateArtwork from "@three/TemplateArtwork"
-import { MSDFTextGeometry, MSDFTextMaterial } from "three-msdf-text-utils"
+import {
+  MSDFTextGeometry,
+  MSDFTextMaterial,
+  uniforms,
+} from "three-msdf-text-utils"
 import * as THREE from "three"
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js"
+import vs from "./vs.vert?raw"
+import fs from "./fs.frag?raw"
+import vsText from "./vsText.vert?raw"
+import fsText from "./fsText.frag?raw"
 // import fnt from "./Truculenta_18pt_Condensed-Regular-msdf.fnt"
 // import png from "./Truculenta18ptCondensed-Regular.png"
+import { gsap } from "gsap"
 
-const pngPath = "/font/Truculenta18ptCondensed-Regular.png"
-const fntPath = "/font/Truculenta_18pt_Condensed-Regular-msdf.fnt"
+import { Pane } from "tweakpane"
+
+const pngPath = "/font/Roboto-Regular.png"
+const fntPath = "/font/Roboto-Regular-msdf.json"
 
 export default class App extends TemplateArtwork {
+  uni?: { [key: string]: THREE.IUniform<any> }
+  params: { [key: string]: any } = {
+    progress1: 0.0,
+    progress2: 0.0,
+    progress3: 0.0,
+    progress4: 0.0,
+  }
   constructor() {
     super()
     CommonWork.addAmbientLight()
     CommonWork.addSpotLight()
     CommonWork.addOrbitControls()
     // CommonWork.addExampleBox()
+
     // console.log(CommonWork.scene)
     this.onInit()
   }
 
   onInit(): void {
+    this.addGUI()
+
+    this.uni = {
+      uTime: { value: 0 },
+      uProgress1: { value: 0 },
+      uProgress2: { value: 0 },
+      uProgress3: { value: 0 },
+      uProgress4: { value: 0 },
+      play: () => {
+        console.log("play")
+      },
+    }
+    // CommonWork.addShaderPlane({
+    //   uniform: this.uni,
+    //   vertexShader: vs,
+    //   fragmentShader: fs,
+    //   isRawShader: false,
+    // })
     this.addMSDFText()
     super.onInit()
+  }
+
+  addGUI() {
+    const pane = new Pane()
+    const onChange = (number: number) => {
+      if (this.uni) {
+        this.uni["uProgress" + number].value = this.params["progress" + number]
+      }
+      console.log(this.uni)
+    }
+    pane
+      .addBinding(this.params, "progress1", { min: 0, max: 1 })
+      .on("change", () => onChange(1))
+    pane
+      .addBinding(this.params, "progress2", { min: 0, max: 1 })
+      .on("change", () => onChange(2))
+    pane
+      .addBinding(this.params, "progress3", { min: 0, max: 1 })
+      .on("change", () => onChange(3))
+    pane
+      .addBinding(this.params, "progress4", { min: 0, max: 1 })
+      .on("change", () => onChange(4))
+
+    pane
+      .addButton({
+        title: "Play",
+      })
+      .on("click", () => {
+        console.log("play")
+        this.playAnimation()
+      })
+  }
+
+  playAnimation() {
+    if (!this.uni) return
+    const tl = gsap.timeline()
+    const duration = 1.5
+    const delay = 0.1
+
+    tl.add([
+      gsap.set(this.uni.uProgress1, { value: 0 }),
+      gsap.set(this.uni.uProgress2, { value: 0 }),
+      gsap.set(this.uni.uProgress3, { value: 0 }),
+      gsap.set(this.uni.uProgress4, { value: 0 }),
+    ]).add([
+      gsap.to(this.uni?.uProgress1, {
+        value: 1,
+        duration,
+        delay,
+      }),
+      gsap.to(this.uni?.uProgress2, {
+        value: 1,
+        duration,
+        delay: delay * 2,
+      }),
+      gsap.to(this.uni?.uProgress3, {
+        value: 1,
+        duration,
+        delay: delay * 3,
+      }),
+      gsap.to(this.uni?.uProgress4, {
+        value: 1,
+        duration,
+        delay: delay * 4,
+      }),
+    ])
   }
 
   addMSDFText() {
     Promise.all([this.loadFontAtlas(pngPath), this.loadFont(fntPath)]).then(
       ([atlas, font]: [any, any]) => {
         const geometry = new MSDFTextGeometry({
-          text: "Hello",
+          text: "STUNNING", // "Hello",
           font: font.data,
+
           // flipY: false,
           // width: 10,
           // align: "center",
@@ -41,16 +145,45 @@ export default class App extends TemplateArtwork {
         // const _y =
         //   -(geometry.boundingBox.max.y - geometry.boundingBox.min.y) / 2
 
-        const material = new MSDFTextMaterial({
+        // const material = new MSDFTextMaterial({
+        //   side: THREE.DoubleSide,
+        // })
+
+        const material = new THREE.ShaderMaterial({
           side: THREE.DoubleSide,
+          transparent: true,
+          defines: {
+            IS_SMALL: false,
+          },
+          extensions: {
+            derivatives: true,
+          },
+          uniforms: {
+            // Common
+            ...uniforms.common,
+
+            // Rendering
+            ...uniforms.rendering,
+
+            // Strokes
+            ...uniforms.strokes,
+
+            // Custom
+            ...this.uni,
+            ...{
+              uStrokeColor: { value: new THREE.Color(0xffffff) },
+            },
+          },
+          vertexShader: vsText,
+          fragmentShader: fsText,
         })
         material.uniforms.uMap.value = atlas
 
         const mesh = new THREE.Mesh(geometry, material)
         mesh.name = "MSDFText"
-        mesh.scale.set(0.07, 0.07, 0.07)
+        mesh.scale.set(0.02, 0.02, 0.02)
         mesh.scale.y *= -1
-        mesh.position.set(-1.9, -0.8, 0)
+        mesh.position.set(-1.9, -0.6, 0)
 
         CommonWork.scene?.add(mesh)
         console.log(geometry)
