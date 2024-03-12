@@ -28,6 +28,7 @@ export default class App extends TemplateArtwork {
     progress3: 0.0,
     progress4: 0.0,
   }
+  tl?: gsap.core.Timeline
   constructor() {
     super()
     CommonWork.addAmbientLight()
@@ -92,42 +93,45 @@ export default class App extends TemplateArtwork {
 
   playAnimation() {
     if (!this.uni) return
-    const tl = gsap.timeline()
-    const duration = 1.5
+    if (this.tl) this.tl.kill()
+    this.tl = gsap.timeline()
+    const duration = 2.5
     const delay = 0.1
-    const ease = "power1.out"
+    const ease = "power4.out"
 
-    tl.add([
-      gsap.set(this.uni.uProgress1, { value: 0 }),
-      gsap.set(this.uni.uProgress2, { value: 0 }),
-      gsap.set(this.uni.uProgress3, { value: 0 }),
-      gsap.set(this.uni.uProgress4, { value: 0 }),
-    ]).add([
-      gsap.to(this.uni?.uProgress1, {
-        value: 1,
-        duration,
-        delay,
-        ease,
-      }),
-      gsap.to(this.uni?.uProgress2, {
-        value: 1,
-        duration,
-        delay: delay * 2,
-        ease,
-      }),
-      gsap.to(this.uni?.uProgress3, {
-        value: 1,
-        duration,
-        delay: delay * 3,
-        ease,
-      }),
-      gsap.to(this.uni?.uProgress4, {
-        value: 1,
-        duration,
-        delay: delay * 4,
-        ease,
-      }),
-    ])
+    this.tl
+      .add([
+        gsap.set(this.uni.uProgress1, { value: 0 }),
+        gsap.set(this.uni.uProgress2, { value: 0 }),
+        gsap.set(this.uni.uProgress3, { value: 0 }),
+        gsap.set(this.uni.uProgress4, { value: 0 }),
+      ])
+      .add([
+        gsap.to(this.uni?.uProgress1, {
+          value: 1,
+          duration,
+          delay,
+          ease,
+        }),
+        gsap.to(this.uni?.uProgress2, {
+          value: 1,
+          duration,
+          delay: delay * 2,
+          ease,
+        }),
+        gsap.to(this.uni?.uProgress3, {
+          value: 1,
+          duration,
+          delay: delay * 3,
+          ease,
+        }),
+        gsap.to(this.uni?.uProgress4, {
+          value: 1,
+          duration,
+          delay: delay * 4,
+          ease,
+        }),
+      ])
   }
 
   addMSDFText() {
