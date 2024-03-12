@@ -96,7 +96,6 @@ export default class App extends TemplateArtwork {
     if (this.tl) this.tl.kill()
     this.tl = gsap.timeline()
     const duration = 2.5
-    const delay = 0.1
     const ease = "power4.out"
 
     this.tl
@@ -110,25 +109,25 @@ export default class App extends TemplateArtwork {
         gsap.to(this.uni?.uProgress1, {
           value: 1,
           duration,
-          delay,
+          delay: 0,
           ease,
         }),
         gsap.to(this.uni?.uProgress2, {
           value: 1,
           duration,
-          delay: delay * 2,
+          delay: 0.2,
           ease,
         }),
         gsap.to(this.uni?.uProgress3, {
           value: 1,
           duration,
-          delay: delay * 3,
+          delay: 0.3,
           ease,
         }),
         gsap.to(this.uni?.uProgress4, {
           value: 1,
           duration,
-          delay: delay * 4,
+          delay: 0.5,
           ease,
         }),
       ])

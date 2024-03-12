@@ -86,7 +86,7 @@
                   float sigDistOutset = sigDist + uStrokeOutsetWidth * 0.5;
       
                   // Inset
-                  float sigDistInset = sigDist - uStrokeInsetWidth * 0.2;
+                  float sigDistInset = sigDist - uStrokeInsetWidth * 0.5;
       
                   #ifdef IS_SMALL
                       float outset = smoothstep(uThreshold - afwidth, uThreshold + afwidth, sigDistOutset);
