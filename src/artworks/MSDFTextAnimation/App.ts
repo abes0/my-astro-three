@@ -17,8 +17,8 @@ import { gsap } from "gsap"
 
 import { Pane } from "tweakpane"
 
-const pngPath = "/font/Roboto-Regular.png"
-const fntPath = "/font/Roboto-Regular-msdf.json"
+const pngPath = "/font/roboto-regular2.png"
+const fntPath = "/font/roboto-regular2.fnt"
 
 export default class App extends TemplateArtwork {
   uni?: { [key: string]: THREE.IUniform<any> }
@@ -48,9 +48,6 @@ export default class App extends TemplateArtwork {
       uProgress2: { value: 0 },
       uProgress3: { value: 0 },
       uProgress4: { value: 0 },
-      play: () => {
-        console.log("play")
-      },
     }
     // CommonWork.addShaderPlane({
     //   uniform: this.uni,
@@ -98,6 +95,7 @@ export default class App extends TemplateArtwork {
     const tl = gsap.timeline()
     const duration = 1.5
     const delay = 0.1
+    const ease = "power1.out"
 
     tl.add([
       gsap.set(this.uni.uProgress1, { value: 0 }),
@@ -109,21 +107,25 @@ export default class App extends TemplateArtwork {
         value: 1,
         duration,
         delay,
+        ease,
       }),
       gsap.to(this.uni?.uProgress2, {
         value: 1,
         duration,
         delay: delay * 2,
+        ease,
       }),
       gsap.to(this.uni?.uProgress3, {
         value: 1,
         duration,
         delay: delay * 3,
+        ease,
       }),
       gsap.to(this.uni?.uProgress4, {
         value: 1,
         duration,
         delay: delay * 4,
+        ease,
       }),
     ])
   }
@@ -136,7 +138,7 @@ export default class App extends TemplateArtwork {
           font: font.data,
 
           // flipY: false,
-          // width: 10,
+          // width: 10000,
           // align: "center",
         })
         geometry.computeBoundingBox()
@@ -172,6 +174,7 @@ export default class App extends TemplateArtwork {
             ...this.uni,
             ...{
               uStrokeColor: { value: new THREE.Color(0xffffff) },
+              uAlphaTest: { value: 0.0000001 },
             },
           },
           vertexShader: vsText,
@@ -181,9 +184,11 @@ export default class App extends TemplateArtwork {
 
         const mesh = new THREE.Mesh(geometry, material)
         mesh.name = "MSDFText"
-        mesh.scale.set(0.02, 0.02, 0.02)
-        mesh.scale.y *= -1
-        mesh.position.set(-1.9, -0.6, 0)
+        const scale = 0.01
+        mesh.scale.set(scale, scale, scale)
+        mesh.rotation.x = Math.PI
+        mesh.position.x = (-geometry.layout.width / 2) * scale
+        mesh.position.y = (-geometry.layout.height / 2) * scale
 
         CommonWork.scene?.add(mesh)
         console.log(geometry)

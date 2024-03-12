@@ -50,7 +50,8 @@
               float getPattern(vec2 uv, vec2 scale) {
                 float x = floor(uv.x * scale.x);
                 float y = floor(uv.y * scale.y);
-                float pattern = noise(vec2(x, y));
+                // float pattern = noise(vec2(x, y));
+                float pattern = mod(x + y, 2.0);
                 return pattern;
               }
 
@@ -136,6 +137,7 @@
                   gl_FragColor = vec4(1.0 , 0.0, 0.0, border );
                   gl_FragColor = vec4(vec3(pattern), 1.0 );;
                   gl_FragColor = layer4;
+                  // gl_FragColor = vec4(1.0 );
                   // gl_FragColor = vec4(vLayoutUv, 0., 1.0 );
                   // gl_FragColor = vec4(vUv, 0., 1.0 );
               }

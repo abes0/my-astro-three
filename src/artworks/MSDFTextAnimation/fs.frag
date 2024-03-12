@@ -1,5 +1,5 @@
 uniform float uTime;
-uniform float uProgress;
+uniform float uProgress1;
 // uniform float progress;
 // uniform sampler2D texture1;
 // uniform vec4 resolution;
@@ -39,11 +39,12 @@ void main() {
   float pattern = noise(vec2(x, y));
 
   float range = 0.5;
-  float p0 = uProgress;
+  float p0 = uProgress1;
   p0 = map(p0, range, 1.0, 0.0, 1.0);
   p0 = smoothstep(p0, p0 + range, vUv.x);
   float p0_ = 2.0 * p0 - (pattern);
 
 
   gl_FragColor = vec4(vec3(p0_), 1.0);
+  // gl_FragColor = vec4(vec3(p0_), 1.0);
 }
