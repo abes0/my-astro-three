@@ -16,19 +16,15 @@ attribute float lineLettersTotal;
 // add Attribute
 attribute vec3 position1;
 attribute vec2 uv1_;
-// attribute vec2 layoutUv1;
 
 attribute vec3 position2;
 attribute vec2 uv2_;
-// attribute vec2 layoutUv2;
 
 attribute vec3 position3;
 attribute vec2 uv3_;
-// attribute vec2 layoutUv3;
 
 attribute vec3 position4;
 attribute vec2 uv4_;
-// attribute vec2 layoutUv4;
 
 attribute vec3 position5;
 attribute vec2 uv5_;
@@ -101,19 +97,15 @@ void main() {
     // Mix
     vec3 _pos = mix(position, position1, uProgress1);
     _pos.x = _pos.x + (uWidth - uWidth1) / 2. * uProgress1;
-    // _pos.y = _pos.y - (uHeight - uHeight1) / 2. * uProgress1;
 
     _pos = mix(_pos, position2, uProgress2);
     _pos.x = _pos.x + (uWidth - uWidth2) / 2. * uProgress2;
-    // _pos.y = _pos.y - (uHeight - uHeight2) / 2. * uProgress2;
 
     _pos = mix(_pos, position3, uProgress3);
     _pos.x = _pos.x + (uWidth - uWidth3) / 2. * uProgress3;
-    // _pos.y = _pos.y - (uHeight - uHeight3) / 2. * uProgress3;
 
     _pos = mix(_pos, position4, uProgress4);
     _pos.x = _pos.x + (uWidth - uWidth4) / 2. * uProgress4;
-    // _pos.y = _pos.y - (uHeight - uHeight4) / 2. * uProgress4;
 
     _pos = mix(_pos, position5, uProgress5);
     _pos.x = _pos.x + (uWidth - uWidth5) / 2. * uProgress5;
@@ -134,7 +126,6 @@ void main() {
     vUv4 = uv4_;
     vUv5 = uv5_;
     vLayoutUv = layoutUv;
-    // vLayoutUv1 = layoutUv1;
     vViewPosition = -mvPosition.xyz;
     // vNormal = normal;
 

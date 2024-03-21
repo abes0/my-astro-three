@@ -135,21 +135,18 @@ float circle(vec2 uv, float _radius){
 float getPattern(vec2 uv, vec2 scale) {
   float x = floor(uv.x * scale.x);
   float y = floor(uv.y * scale.y);
-  // float pattern = noise(vec2(x, y));
   float pattern = mod(x + y, 2.0);
   return pattern;
 }
 
 float getRattlingPattern(vec2 uv, vec2 scale) {
   uv *= scale;
-  // float pattern = noise(vec2(x, y));
   float pattern = mod(uv.x + uv.y, 2.0);
   return pattern;
 }
 
 float getCirclePattern(vec2 uv, vec2 scale) {
   uv *= scale;
-  // float pattern = noise(vec2(x, y));
   uv = mod(uv, 2.0) - 1.0;
   float pattern = length(uv);
   pattern = step(0., 1. - pattern);
@@ -200,9 +197,6 @@ void main() {
     vec3 s5 = texture2D(uMap5, vUv5).rgb;
 
     float mix1 = getMixProgress(vLayoutUv, uProgress1, range, pattern);
-    // float mix1R = getMixProgress(vLayoutUv, uProgressA, range, pattern);
-    // float mix1G = getMixProgress(vLayoutUv, uProgressB, range, pattern);
-    // float mix1B = getMixProgress(vLayoutUv, uProgressC, range, pattern);
     float mix2 = getMixProgress(vLayoutUv, uProgress2, range, pattern);
     float mix3 = getMixProgress(vLayoutUv, uProgress3, range, pattern);
     float mix4 = getMixProgress(vLayoutUv, uProgress4, range, pattern);
@@ -215,11 +209,6 @@ void main() {
     float mixD = getMixProgress(vLayoutUv, uProgressD, range, pattern);
 
     vec3 smix1 = mix(s, s1, mix1);
-    // vec3 smix1A = mix(s, s1, mixA);
-    // vec3 smix1B = mix(s, s1, mixB);
-    // vec3 smix1C = mix(s, s1, mixC);
-    // vec3 smix1D = mix(s, s1, mixD);
-
     vec3 smix2 = mix(smix1, s2, mix2);
     vec3 smix3 = mix(smix2, s3, mix3);
     vec3 smix4 = mix(smix3, s4, mix4);
@@ -266,13 +255,6 @@ void main() {
     // Output: Strokes
     vec4 strokedFragColor = vec4(uStrokeColor, uOpacity * border);
 
-    // float p1 = transition(vUv, uProgress);
-
-    // float pattern = getPattern(vLayoutUv, vec2(15.0, 8.0));
-
-    // float range = 0.4;
-    // float mixE = getMixProgress(vLayoutUv, uProgressE, range, pattern);
-
     vec4 colorA = vec4(1.0, 1.0, 1.0, border);
     vec4 colorB = vec4(0.0, 0.0, 1.0, border * 0.75);
     vec4 colorC = vec4(0.0, 1.0, 0.0, border * 0.75);
@@ -283,16 +265,8 @@ void main() {
     vec4 layerB = mix(layerA, colorC, mixB);
     vec4 layerC = mix(layerB, colorD, mixC);
     vec4 layerD = mix(layerC, colorE, mixD);
-    // vec4 layerE = mix(layerD, colorA, mixE);
-
 
     gl_FragColor = filledFragColor;
-    gl_FragColor = vec4(1.0, 1.0, 1.0, border );
-    // gl_FragColor = vec4(vec3(pattern), 1.0 );
-    // gl_FragColor = vec4(vec3(mix1), 1.0);
+    // gl_FragColor = vec4(1.0, 1.0, 1.0, border );
     gl_FragColor = layerD;
-    // gl_FragColor = vec4(st, 0., 1.0);
-    // gl_FragColor = vec4(uAlphaTest, alpha, 0., 1.0 );
-    // gl_FragColor = vec4(vLayoutUv, 0., 1.0 );
-    // gl_FragColor = vec4(vUv, 0., 1.0 );
 }
