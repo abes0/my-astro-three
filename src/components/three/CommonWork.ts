@@ -26,6 +26,7 @@ class CommonWork {
   camera: THREE.PerspectiveCamera | null = null
   renderer: THREE.WebGLRenderer | null = null
   size: { sw: number; sh: number } = { sw: 0, sh: 0 }
+  aspect: number = 0
   clock: THREE.Clock | null = null
   time: { total: number; delta: number } = {
     total: 0,
@@ -50,12 +51,7 @@ class CommonWork {
     this.setSize()
 
     this.scene = new THREE.Scene()
-    this.camera = new THREE.PerspectiveCamera(
-      45,
-      this.size.sw / this.size.sh,
-      0.01,
-      10000
-    )
+    this.camera = new THREE.PerspectiveCamera(45, this.aspect, 0.01, 10000)
     this.camera.position.set(0, 0, 5)
     this.camera.lookAt(new THREE.Vector3(0, 0, 0))
 
@@ -137,6 +133,7 @@ class CommonWork {
       sw: window.innerWidth,
       sh: window.innerHeight,
     }
+    this.aspect = this.size.sw / this.size.sh
   }
 
   resize() {

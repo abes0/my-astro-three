@@ -6,7 +6,7 @@ import {
   uniforms,
 } from "three-msdf-text-utils"
 import * as THREE from "three"
-import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js"
+import { Font, FontLoader } from "three/examples/jsm/loaders/FontLoader.js"
 import vs from "./vs.vert?raw"
 import fs from "./fs.frag?raw"
 import vsText from "./vsText.vert?raw"
@@ -23,6 +23,7 @@ const fntPath = "/font/roboto-regular2.fnt"
 export default class App extends TemplateArtwork {
   uni?: { [key: string]: THREE.IUniform<any> }
   params: { [key: string]: any } = {
+    progress0: 0.0,
     progress1: 0.0,
     progress2: 0.0,
     progress3: 0.0,
@@ -45,6 +46,7 @@ export default class App extends TemplateArtwork {
 
     this.uni = {
       uTime: { value: 0 },
+      uProgress0: { value: 0 },
       uProgress1: { value: 0 },
       uProgress2: { value: 0 },
       uProgress3: { value: 0 },
@@ -68,6 +70,9 @@ export default class App extends TemplateArtwork {
       }
       console.log(this.uni)
     }
+    pane
+      .addBinding(this.params, "progress0", { min: 0, max: 1 })
+      .on("change", () => onChange(0))
     pane
       .addBinding(this.params, "progress1", { min: 0, max: 1 })
       .on("change", () => onChange(1))
@@ -100,12 +105,6 @@ export default class App extends TemplateArtwork {
 
     this.tl
       .add([
-        gsap.set(this.uni.uProgress1, { value: 0 }),
-        gsap.set(this.uni.uProgress2, { value: 0 }),
-        gsap.set(this.uni.uProgress3, { value: 0 }),
-        gsap.set(this.uni.uProgress4, { value: 0 }),
-      ])
-      .add([
         gsap.to(this.uni?.uProgress1, {
           value: 1,
           duration,
@@ -131,74 +130,32 @@ export default class App extends TemplateArtwork {
           ease,
         }),
       ])
+      .add([
+        gsap.set(this.uni.uProgress1, { value: 0 }),
+        gsap.set(this.uni.uProgress2, { value: 0 }),
+        gsap.set(this.uni.uProgress3, { value: 0 }),
+        gsap.set(this.uni.uProgress4, { value: 0 }),
+      ])
   }
 
   addMSDFText() {
     Promise.all([this.loadFontAtlas(pngPath), this.loadFont(fntPath)]).then(
       ([atlas, font]: [any, any]) => {
-        const geometry = new MSDFTextGeometry({
-          text: "Hello", // "Hello",
-          font: font.data,
-
-          // flipY: false,
-          // width: 10000,
-          // align: "center",
+        const text = "Hello, World!"
+        console.log("addMSDFText", atlas, font)
+        this.getJsonData(font, "H")
+        const geo = new THREE.PlaneGeometry(1, 1, 1, 1)
+        const mat = new THREE.ShaderMaterial({
+          vertexShader: vs,
+          fragmentShader: fs,
         })
-        // console.log(geometry)
-        geometry.computeBoundingBox()
-        // const _x =
-        //   -(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2
-        // const _y =
-        //   -(geometry.boundingBox.max.y - geometry.boundingBox.min.y) / 2
-
-        // const material = new MSDFTextMaterial({
-        //   side: THREE.DoubleSide,
-        // })
-
-        const material = new THREE.ShaderMaterial({
-          side: THREE.DoubleSide,
-          transparent: true,
-          defines: {
-            IS_SMALL: false,
-          },
-          extensions: {
-            derivatives: true,
-          },
-          uniforms: {
-            // Common
-            ...uniforms.common,
-
-            // Rendering
-            ...uniforms.rendering,
-
-            // Strokes
-            ...uniforms.strokes,
-
-            // Custom
-            ...this.uni,
-            ...{
-              uStrokeColor: { value: new THREE.Color(0xffffff) },
-              uAlphaTest: { value: 0.0000001 },
-            },
-          },
-          vertexShader: vsText,
-          fragmentShader: fsText,
-        })
-        material.uniforms.uMap.value = atlas
-
-        const mesh = new THREE.Mesh(geometry, material)
-        mesh.name = "MSDFText"
-        const scale = 0.01
-        mesh.scale.set(scale, scale, scale)
-        mesh.rotation.x = Math.PI
-        mesh.position.x = (-geometry.layout.width / 2) * scale
-        mesh.position.y = (-geometry.layout.height / 2) * scale
-
+        const mesh = new THREE.Mesh(geo, mat)
         CommonWork.scene?.add(mesh)
-        console.log(geometry)
       }
     )
   }
+
+  getJsonData(data: Font, text: string) {}
 
   loadFontAtlas(path: string) {
     const promise = new Promise((resolve, reject) => {

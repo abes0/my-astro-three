@@ -1,50 +1,13 @@
 uniform float uTime;
-uniform float uProgress1;
-// uniform float progress;
-// uniform sampler2D texture1;
-// uniform vec4 resolution;
+
 varying vec2 vUv;
 varying vec3 vPosition;
 float PI = 3.1415926535897932384626433832795;
 
-float rand(float n){return fract(sin(n) * 43758.5453123);}
-float rand(vec2 n) {
-	return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
-}
-
-float noise(float p){
-	float fl = floor(p);
-  float fc = fract(p);
-	return mix(rand(fl), rand(fl + 1.0), fc);
-}
-	
-float noise(vec2 n) {
-	const vec2 d = vec2(0.0, 1.0);
-  vec2 b = floor(n), f = smoothstep(vec2(0.0), vec2(1.0), fract(n));
-  
-  float _a = mix(rand(b), rand(b + d.yx), f.x);
-  float _b = mix(rand(b + d.xy), rand(b + d.yy), f.x);
-	return mix(_a, _b, f.y);
-}
-
-float map(float value, float min1, float max1, float min2, float max2) {
-  return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
-}
-
 
 void main() {
 
-  float x = floor(vUv.x * 10.0);
-  float y = floor(vUv.y * 10.0);
-  float pattern = noise(vec2(x, y));
-
-  float range = 0.5;
-  float p0 = uProgress1;
-  p0 = map(p0, range, 1.0, 0.0, 1.0);
-  p0 = smoothstep(p0, p0 + range, vUv.x);
-  float p0_ = 2.0 * p0 - (pattern);
-
-
-  gl_FragColor = vec4(vec3(p0_), 1.0);
+  
+  gl_FragColor = vec4(vUv, 0.0, 1.0);
   // gl_FragColor = vec4(vec3(p0_), 1.0);
 }
